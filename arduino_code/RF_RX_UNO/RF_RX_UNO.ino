@@ -1,47 +1,34 @@
-#include <ManchesterRF.h>
+#include <Manchester.h>
 
 #define RX_PIN 4 //any pin can transmit
 #define LED_PIN 2
 
-ManchesterRF rf(MAN_4800); //link speed, try also MAN_300, MAN_600, MAN_1200, MAN_2400, MAN_4800, MAN_9600, MAN_19200, MAN_38400
-
 uint8_t a, b;
 uint8_t size;
 
-typedef struct {
-
-    char ID;   // TRANSMITTER ID
-    uint8_t A1;  // Analogue Sensor Read
-    uint8_t A2;  // Analalogue Sensor read (current other direction)
-
-} mssg_t;
-
-mssg_t mssg;
+#define BUFFER_SIZE 4
+uint8_t buffer[BUFFER_SIZE];
 
 void setup() {
   pinMode(LED_PIN, OUTPUT);  
   digitalWrite(LED_PIN, LOW);
-  rf.RXInit(RX_PIN);
-  Serial.begin(4800);
+  Serial.begin(9600);
+  man.setupReceive(RX_PIN, MAN_4800);
+  man.beginReceiveArray(BUFFER_SIZE, buffer);
 }
 
 void loop() {
-  if (rf.available()) { //something is in RX buffer
-    if (rf.receiveArray(size, (uint8_t **)&mssg)) {
-      Serial.println("Recieved rx:");
-      Serial.println(mssg.ID);
+  if (man.receiveComplete()) { //something is in RX buffer
+      Serial.println("Recieved TX:");
+      Serial.println(buffer[3]);
       Serial.println("Recieved A1:");
-      Serial.println(mssg.A1);
+      Serial.println(buffer[1]);
       Serial.println("Recieved A2:");
-      Serial.println(mssg.A2);
-      digitalWrite(LED_PIN, HIGH); //blink the LED on receive}
-      delay(10000);
+      Serial.println(buffer[2]);
+      digitalWrite(LED_PIN, HIGH); //blink the LED on receive
+      man.beginReceiveArray(BUFFER_SIZE, buffer);
+      delay(200);
       digitalWrite(LED_PIN, LOW);
-    }
   }
-  else {
-    Serial.println("nada");
-  }
-
 }
 
