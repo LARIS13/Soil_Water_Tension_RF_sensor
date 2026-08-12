@@ -26,7 +26,7 @@ const float cFactor = 1.1; //correction factor optional for adjusting curve, 1.1
 #define num_sens 4
 
 uint8_t size;
-uint8_t buffer[BUFFER_SIZE];
+uint8_t buffer[BUFFER_SIZE] = {};
 
 const char* ssid = STASSID;
 const char* password = STAPSK;
@@ -38,7 +38,7 @@ const char* NTPServerName = "mx.pool.ntp.org";
 
 const int NTP_PACKET_SIZE = 48;  // NTP time stamp is in the first 48 bytes of the message
 
-byte NTPBuffer[NTP_PACKET_SIZE];  // buffer to hold incoming and outgoing packets
+byte NTPBuffer[NTP_PACKET_SIZE] = {};  // buffer to hold incoming and outgoing packets
 
 // A UDP instance to let us send and receive packets over UDP
 WiFiUDP UDP;
